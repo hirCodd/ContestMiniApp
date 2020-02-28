@@ -1,6 +1,7 @@
 import Taro, { Component, Config } from '@tarojs/taro'
 import Index from './pages/index'
-
+import { Provider } from "@tarojs/redux";
+import 'taro-ui/dist/style/index.scss'
 import './app.scss'
 
 // 如果需要在 h5 环境中开启 React Devtools
@@ -28,8 +29,28 @@ class App extends Component {
    */
   config: Config = {
     pages: [
-      'pages/index/index'
+      'pages/index/index',
+      'pages/mine/index'
     ],
+    tabBar: {
+      backgroundColor: "#fff",
+      borderStyle: "black",
+      selectedColor: "#07C160",
+      color: "#000",
+      list: [
+        {
+          pagePath: "pages/index/index",
+          text: "主页",
+          iconPath: "assets/icon/home.png",
+          selectedIconPath: "assets/icon/home-selected.png"
+        },
+        {
+          pagePath: "pages/mine/index",
+          text: "我",
+          iconPath: "assets/icon/mine.png",
+          selectedIconPath: "assets/icon/mine-selected.png"
+        }]
+    },
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#fff',
@@ -42,7 +63,9 @@ class App extends Component {
   // 请勿修改此函数
   render () {
     return (
-      <Index />
+      <Provider>
+        <Index />
+      </Provider>
     )
   }
 }
