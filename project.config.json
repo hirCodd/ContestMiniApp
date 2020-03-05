@@ -2,7 +2,7 @@
   "miniprogramRoot": "./dist",
   "projectname": "ContestApp",
   "description": "contest",
-  "appid": "touristappid",
+  "appid": "wx9b90916fcf92bcc0",
   "setting": {
     "urlCheck": true,
     "es6": false,

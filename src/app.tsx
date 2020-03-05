@@ -30,7 +30,9 @@ class App extends Component {
   config: Config = {
     pages: [
       'pages/index/index',
-      'pages/mine/index'
+      'pages/mine/index',
+      'pages/ChildPages/ContestDetail/index',
+      'pages/ChildPages/ApplyContest/index'
     ],
     tabBar: {
       backgroundColor: "#fff",

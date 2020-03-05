@@ -5,13 +5,13 @@ import './index.scss'
 import { AtSearchBar, AtLoadMore  } from 'taro-ui'
 // eslint-disable-next-line import/first
 import {Button, View} from '@tarojs/components'
+import Contest from "../../component/Contest";
 
 export default class Index extends Component {
   config: Config = {
     navigationBarTitleText: '首页'
   };
   constructor (props) {
-    // eslint-disable-next-line prefer-rest-params
     super(props);
     this.state = {
       value: '',
@@ -41,6 +41,11 @@ export default class Index extends Component {
   }
   onActionClick () {
   }
+  onClickContest () {
+    Taro.navigateTo({
+      url: '/pages/ChildPages/ContestDetail/index'
+    });
+  }
 
   render () {
     return (
@@ -56,6 +61,7 @@ export default class Index extends Component {
           onActionClick={this.onActionClick.bind(this)
           }
         />
+        <Contest onClick={this.onClickContest.bind(this)}></Contest>
       </View>
     )
   }

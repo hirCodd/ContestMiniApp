@@ -75,7 +75,7 @@ export default class Mine extends Component {
         ></UserInfoBar>
         <View className='about-reader'>
           <AtList>
-            {/*<AtListItem onClick={this.onClickBrowsePage} title='浏览记录' arrow='right' iconInfo={{ size: 24, color: '#F5C534', value: 'clock' }} />*/}
+            <AtListItem onClick={this.onClickBrowsePage} title='我的报名' arrow='right' iconInfo={{ size: 24, color: '#F5C534', value: 'clock' }} />
             {/*<AtListItem onClick={this.onClickFavoritePage} title='我的收藏' arrow='right' iconInfo={{ size: 24, color: '#74CAFF', value: 'star' }} />*/}
             {/*<AtListItem onClick={this.onClickMyLikePage} title='点赞好文' arrow='right' iconInfo={{ size: 25, color: '#FF4959', value: 'heart-2' }} />*/}
             {/*<AtListItem title='我的xx' arrow='right' extraText='详细信息' iconInfo={{ size: 25, color: '#FF4949', value: 'bookmark' }} />*/}
