@@ -2,7 +2,13 @@ import Taro, { Component, Config } from '@tarojs/taro'
 import './index.scss'
 import {Image, Text, View} from "@tarojs/components";
 import {AtInput, AtForm, AtCard, AtButton, AtTabs, AtTabsPane} from 'taro-ui'
+import {connect} from "@tarojs/redux";
+import {insertContestMember} from "../../../services";
 
+// @ts-ignore
+@connect(({ home }) => ({
+  home
+}))
 export default class Index extends Component {
   config: Config = {
     navigationBarTitleText: '比赛报名'
@@ -11,6 +17,18 @@ export default class Index extends Component {
     super(props);
     this.state = {
       current: 0,
+      playInfo: [],
+      player1: {
+        contestId: '',
+        openId: '',
+        memberName: '',
+        memberPhone: '',
+        contestArea: '',
+        memberPlayerId: '',
+        memberPlayerLevel: '',
+        contestOtherInfo: '',
+        isTeam: ''
+      },
       //第一个
       username1: '',
       contactPhone1: '',
@@ -49,7 +67,12 @@ export default class Index extends Component {
       //team
       teamName: ''
     }
+
   }
+  componentDidMount () {
+    console.log(this.$router.params.contestId)
+  }
+
   handleChangeTeamName (teamName) {
     this.setState({
       teamName: teamName
@@ -59,7 +82,7 @@ export default class Index extends Component {
   handleClick (value) {
     this.setState({
       current: value
-    })
+    });
   }
   handleChangeName1 (username1) {
     this.setState({
@@ -280,6 +303,35 @@ export default class Index extends Component {
   }
 
   onClickValue () {
+    if (this.state.current ==  0) {
+      this.state.player1.contestId = this.$router.params.contestId;
+      this.state.player1.openId = 'xxxxx';
+      this.state.player1.memberName = this.state.username1;
+      this.state.player1.memberPhone = this.state.contactPhone1;
+      this.state.player1.contestArea= this.state.contestArea1;
+      this.state.player1.memberPlayerId = this.state.playerId1;
+      this.state.player1.memberPlayLevel = this.state.playerLevel1;
+      this.state.player1.contestOtherInfo = this.state.otherInfo1;
+      this.state.player1.isTeam = false;
+
+      this.state.playInfo.push(this.state.player1);
+      console.log(this.state.player1);
+      console.log(this.state.playInfo);
+      insertContestMember(this.state.playInfo).then(function (res) {
+        if (res.data.msg == "success") {
+          Taro.setStorageSync("isSubmit", true);
+          Taro.navigateBack({
+            delta: 1
+          });
+        }
+      });
+    } else {
+
+    }
+
+
+
+    console.log(this.state.current)
     console.log(this.state.username1, this.state.contactPhone1,
       this.state.contestArea1 ,this.state.playerId1, this.state.playerLevel1,
       this.state.otherInfo1)
@@ -298,7 +350,7 @@ export default class Index extends Component {
             <AtTabsPane current={this.state.current} index={0} >
               <View style='padding: 20px 20px;background-color: #FAFBFC;text-align: center;' >
                 <AtCard
-                  title='选手卡1'
+                  title='单人选手卡'
                   className='tab-card'
                 >
                   <AtForm className='apply-info'>
@@ -308,7 +360,7 @@ export default class Index extends Component {
                       title='姓名'
                       type='text'
                       placeholder='姓名'
-                      value={this.state.username1}
+                      value={this.state.player1.username1}
                       onChange={this.handleChangeName1.bind(this)}
                     />
                     <AtInput
@@ -317,7 +369,7 @@ export default class Index extends Component {
                       title='联系方式'
                       type='text'
                       placeholder='联系方式'
-                      value={this.state.contactPhone1}
+                      value={this.state.player1.contactPhone1}
                       onChange={this.handleChangeContact1.bind(this)}
                     />
                     <AtInput
@@ -326,7 +378,7 @@ export default class Index extends Component {
                       title='大区'
                       type='text'
                       placeholder='大区'
-                      value={this.state.contestArea1}
+                      value={this.state.player1.contestArea1}
                       onChange={this.handleChangeArea1.bind(this)}
                     />
                     <AtInput
@@ -335,7 +387,7 @@ export default class Index extends Component {
                       title='游戏ID'
                       type='text'
                       placeholder='游戏ID'
-                      value={this.state.playerId1}
+                      value={this.state.player1.playerId1}
                       onChange={this.handleChangePlayerId1.bind(this)}
                     />
                     <AtInput
@@ -344,7 +396,7 @@ export default class Index extends Component {
                       title='段位'
                       type='text'
                       placeholder='段位'
-                      value={this.state.playerLevel1}
+                      value={this.state.player1.playerLevel1}
                       onChange={this.handleChangeLevel1.bind(this)}
                     />
                     <AtInput
@@ -353,7 +405,7 @@ export default class Index extends Component {
                       title='其他信息'
                       type='text'
                       placeholder='其他信息'
-                      value={this.state.otherInfo1}
+                      value={this.state.player1.otherInfo1}
                       onChange={this.handleChangeOther1.bind(this)}
                     />
                   </AtForm>
@@ -369,13 +421,13 @@ export default class Index extends Component {
                   name='teamName'
                   title='组队名'
                   type='text'
-                  placeholder='姓名'
+                  placeholder='组队名'
                   value={this.state.teamName}
                   onChange={this.handleChangeTeamName.bind(this)}
                 />
 
                 <AtCard
-                  title='选手卡1'
+                  title='领队选手卡'
                   className='tab-card'
                 >
                   <AtForm className='apply-info'>
