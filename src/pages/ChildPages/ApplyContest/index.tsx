@@ -3,7 +3,7 @@ import './index.scss'
 import {Image, Text, View} from "@tarojs/components";
 import {AtInput, AtForm, AtCard, AtButton, AtTabs, AtTabsPane} from 'taro-ui'
 import {connect} from "@tarojs/redux";
-import {insertContestMember} from "../../../services";
+import {insertContestMember, insertTeamInfo} from "../../../services";
 
 // @ts-ignore
 @connect(({ home }) => ({
@@ -18,17 +18,90 @@ export default class Index extends Component {
     this.state = {
       current: 0,
       playInfo: [],
-      player1: {
+      player: {
         contestId: '',
         openId: '',
+        teamId: '',
         memberName: '',
         memberPhone: '',
         contestArea: '',
         memberPlayerId: '',
         memberPlayerLevel: '',
         contestOtherInfo: '',
-        isTeam: ''
+        isTeam: '',
+        applyResult: ''
       },
+      player1: {
+        contestId: '',
+        openId: '',
+        teamId: '',
+        memberName: '',
+        memberPhone: '',
+        contestArea: '',
+        memberPlayerId: '',
+        memberPlayerLevel: '',
+        contestOtherInfo: '',
+        isTeam: '',
+        applyResult: ''
+      },
+      player2: {
+        contestId: '',
+        openId: '',
+        teamId: '',
+        memberName: '',
+        memberPhone: '',
+        contestArea: '',
+        memberPlayerId: '',
+        memberPlayerLevel: '',
+        contestOtherInfo: '',
+        isTeam: '',
+        applyResult: ''
+      },
+      player3: {
+        contestId: '',
+        openId: '',
+        teamId: '',
+        memberName: '',
+        memberPhone: '',
+        contestArea: '',
+        memberPlayerId: '',
+        memberPlayerLevel: '',
+        contestOtherInfo: '',
+        isTeam: '',
+        applyResult: ''
+      },
+      player4: {
+        contestId: '',
+        openId: '',
+        teamId: '',
+        memberName: '',
+        memberPhone: '',
+        contestArea: '',
+        memberPlayerId: '',
+        memberPlayerLevel: '',
+        contestOtherInfo: '',
+        isTeam: '',
+        applyResult: ''
+      },
+      player5: {
+        contestId: '',
+        openId: '',
+        teamId: '',
+        memberName: '',
+        memberPhone: '',
+        contestArea: '',
+        memberPlayerId: '',
+        memberPlayerLevel: '',
+        contestOtherInfo: '',
+        isTeam: '',
+        applyResult: ''
+      },
+      username: '',
+      contactPhone: '',
+      contestArea: '',
+      playerId: '',
+      playerLevel: '',
+      otherInfo: '',
       //第一个
       username1: '',
       contactPhone1: '',
@@ -65,18 +138,34 @@ export default class Index extends Component {
       playerLevel5: '',
       otherInfo5: '',
       //team
-      teamName: ''
+      teamName: '',
+      teamInfo: {
+        openId: '',
+        teamName: '',
+        contestId: ''
+      }
     }
-
   }
+  async componentWillMount(): void {
+    await this.props.dispatch({
+      type: 'home/queryTeamNames',
+      payload: {
+        contestId: this.$router.params.contestId,
+      }
+    });
+  }
+
   componentDidMount () {
-    console.log(this.$router.params.contestId)
   }
-
   handleChangeTeamName (teamName) {
     this.setState({
       teamName: teamName
     });
+    if (this.props.home.allTeamName.indexOf(teamName) > -1) {
+      Taro.showToast({
+        title: "对面已存在！"
+      })
+    }
     return teamName
   }
   handleClick (value) {
@@ -84,6 +173,48 @@ export default class Index extends Component {
       current: value
     });
   }
+  handleChangeName (username) {
+    this.setState({
+      username: username
+    });
+    return username
+  }
+  handleChangeContact (contactPhone) {
+    this.setState({
+      contactPhone: contactPhone
+
+    });
+    return contactPhone
+  }
+
+  handleChangeArea (contestArea) {
+    this.setState({
+      contestArea: contestArea
+    });
+    return contestArea
+  }
+
+  handleChangePlayerId (playerId) {
+    this.setState({
+      playerId: playerId
+    });
+    return playerId
+  }
+
+  handleChangeLevel (playerLevel) {
+    this.setState({
+      playerLevel: playerLevel
+    });
+    return playerLevel
+  }
+
+  handleChangeOther (otherInfo) {
+    this.setState({
+      otherInfo: otherInfo
+    });
+    return otherInfo
+  }
+
   handleChangeName1 (username1) {
     this.setState({
       username1: username1
@@ -93,7 +224,6 @@ export default class Index extends Component {
   handleChangeContact1 (contactPhone1) {
     this.setState({
       contactPhone1: contactPhone1
-
     });
     return contactPhone1
   }
@@ -128,7 +258,6 @@ export default class Index extends Component {
 
   // 2
   handleChangeName2 (username2) {
-    console.log(username2)
     this.setState({
       username2: username2
     });
@@ -137,7 +266,6 @@ export default class Index extends Component {
   handleChangeContact2 (contactPhone2) {
     this.setState({
       contactPhone2: contactPhone2
-
     });
     return contactPhone2
   }
@@ -172,7 +300,6 @@ export default class Index extends Component {
 
   // 3
   handleChangeName3 (username3) {
-    console.log(username3)
     this.setState({
       username3: username3
     });
@@ -181,7 +308,6 @@ export default class Index extends Component {
   handleChangeContact3 (contactPhone3) {
     this.setState({
       contactPhone3: contactPhone3
-
     });
     return contactPhone3
   }
@@ -216,7 +342,6 @@ export default class Index extends Component {
 
   // 4
   handleChangeName4 (username4) {
-    console.log(username4)
     this.setState({
       username4: username4
     });
@@ -225,7 +350,6 @@ export default class Index extends Component {
   handleChangeContact4 (contactPhone4) {
     this.setState({
       contactPhone4: contactPhone4
-
     });
     return contactPhone4
   }
@@ -260,7 +384,6 @@ export default class Index extends Component {
 
   // 5
   handleChangeName5 (username5) {
-    console.log(username5)
     this.setState({
       username5: username5
     });
@@ -269,7 +392,6 @@ export default class Index extends Component {
   handleChangeContact5 (contactPhone5) {
     this.setState({
       contactPhone5: contactPhone5
-
     });
     return contactPhone5
   }
@@ -302,39 +424,126 @@ export default class Index extends Component {
     return otherInfo5
   }
 
-  onClickValue () {
+  async onClickValue () {
+    let that = this;
+    let userInfo = Taro.getStorageSync("logininfo");
+    this.state.playInfo = [];
     if (this.state.current ==  0) {
+      this.state.player.contestId = this.$router.params.contestId;
+      this.state.player.openId = userInfo.openid;
+      this.state.player.teamId = "";
+      this.state.player.memberName = this.state.username;
+      this.state.player.memberPhone = this.state.contactPhone;
+      this.state.player.contestArea= this.state.contestArea;
+      this.state.player.memberPlayerId = this.state.playerId;
+      this.state.player.memberPlayLevel = this.state.playerLevel;
+      this.state.player.contestOtherInfo = this.state.otherInfo;
+      this.state.player.isTeam = false;
+      this.state.player.applyResult = true;
+
+      this.state.playInfo.push(this.state.player);
+      await insertContestMember(this.state.playInfo).then(function (res) {
+        if (res.data.msg == "success") {
+          Taro.navigateBack({
+            delta: 1
+          })
+        }
+      });
+    } else {
+      this.state.teamInfo.openId = userInfo.openid;
+      this.state.teamInfo.teamName = this.state.teamName;
+      this.state.teamInfo.contestId = this.$router.params.contestId;
+
+      await this.props.dispatch({
+        type: 'home/queryTeamInfoResult',
+        payload: {
+          contestId: this.$router.params.contestId,
+          openId: userInfo.openid
+        }
+      });
+      let teamId = null;
+      if (that.props.home.teamInfo == null) {
+        await this.props.dispatch({
+          type: 'home/insertTeamInfo',
+          payload: {
+            teamInfo: this.state.teamInfo
+          }
+        });
+        teamId = that.props.home.teamId;
+      } else {
+        teamId = that.props.home.teamInfo;
+      }
+
       this.state.player1.contestId = this.$router.params.contestId;
-      this.state.player1.openId = 'xxxxx';
+      this.state.player1.openId = userInfo.openid;
+      this.state.player1.teamId = teamId;
       this.state.player1.memberName = this.state.username1;
       this.state.player1.memberPhone = this.state.contactPhone1;
       this.state.player1.contestArea= this.state.contestArea1;
       this.state.player1.memberPlayerId = this.state.playerId1;
       this.state.player1.memberPlayLevel = this.state.playerLevel1;
       this.state.player1.contestOtherInfo = this.state.otherInfo1;
-      this.state.player1.isTeam = false;
+      this.state.player1.isTeam = true;
+      this.state.player1.applyResult = true;
 
-      this.state.playInfo.push(this.state.player1);
-      console.log(this.state.player1);
-      console.log(this.state.playInfo);
-      insertContestMember(this.state.playInfo).then(function (res) {
+      this.state.player2.contestId = this.$router.params.contestId;
+      this.state.player2.openId = "";
+      this.state.player2.teamId = teamId;
+      this.state.player2.memberName = this.state.username2;
+      this.state.player2.memberPhone = this.state.contactPhone2;
+      this.state.player2.contestArea= this.state.contestArea2;
+      this.state.player2.memberPlayerId = this.state.playerId2;
+      this.state.player2.memberPlayLevel = this.state.playerLevel2;
+      this.state.player2.contestOtherInfo = this.state.otherInfo2;
+      this.state.player2.isTeam = true;
+      this.state.player2.applyResult = true;
+
+      this.state.player3.contestId = this.$router.params.contestId;
+      this.state.player3.openId = "";
+      this.state.player3.teamId = teamId;
+      this.state.player3.memberName = this.state.username3;
+      this.state.player3.memberPhone = this.state.contactPhone3;
+      this.state.player3.contestArea= this.state.contestArea3;
+      this.state.player3.memberPlayerId = this.state.playerId3;
+      this.state.player3.memberPlayLevel = this.state.playerLevel3;
+      this.state.player3.contestOtherInfo = this.state.otherInfo3;
+      this.state.player3.isTeam = true;
+      this.state.player3.applyResult = true;
+
+      this.state.player4.contestId = this.$router.params.contestId;
+      this.state.player4.openId = "";
+      this.state.player4.teamId = teamId;
+      this.state.player4.memberName = this.state.username4;
+      this.state.player4.memberPhone = this.state.contactPhone4;
+      this.state.player4.contestArea= this.state.contestArea4;
+      this.state.player4.memberPlayerId = this.state.playerId4;
+      this.state.player4.memberPlayLevel = this.state.playerLevel4;
+      this.state.player4.contestOtherInfo = this.state.otherInfo4;
+      this.state.player4.isTeam = true;
+      this.state.player4.applyResult = true;
+
+      this.state.player5.contestId = this.$router.params.contestId;
+      this.state.player5.openId = "";
+      this.state.player5.teamId = teamId;
+      this.state.player5.memberName = this.state.username5;
+      this.state.player5.memberPhone = this.state.contactPhone5;
+      this.state.player5.contestArea= this.state.contestArea5;
+      this.state.player5.memberPlayerId = this.state.playerId5;
+      this.state.player5.memberPlayLevel = this.state.playerLevel5;
+      this.state.player5.contestOtherInfo = this.state.otherInfo5;
+      this.state.player5.isTeam = true;
+      this.state.player5.applyResult = true;
+      that.state.playInfo.push(this.state.player1, this.state.player2, this.state.player3,
+        this.state.player4, this.state.player5);
+
+      await insertContestMember(this.state.playInfo).then(function (res) {
         if (res.data.msg == "success") {
-          Taro.setStorageSync("isSubmit", true);
           Taro.navigateBack({
             delta: 1
-          });
+          })
         }
       });
-    } else {
-
     }
-
-
-
-    console.log(this.state.current)
-    console.log(this.state.username1, this.state.contactPhone1,
-      this.state.contestArea1 ,this.state.playerId1, this.state.playerLevel1,
-      this.state.otherInfo1)
   }
 
   render () {
@@ -356,57 +565,57 @@ export default class Index extends Component {
                   <AtForm className='apply-info'>
                     <AtInput
                       className='input1'
-                      name='username1'
+                      name='username'
                       title='姓名'
                       type='text'
                       placeholder='姓名'
-                      value={this.state.player1.username1}
-                      onChange={this.handleChangeName1.bind(this)}
+                      value={this.state.player.username}
+                      onChange={this.handleChangeName.bind(this)}
                     />
                     <AtInput
                       className='input1'
-                      name='contactPhone1'
+                      name='contactPhone'
                       title='联系方式'
                       type='text'
                       placeholder='联系方式'
-                      value={this.state.player1.contactPhone1}
-                      onChange={this.handleChangeContact1.bind(this)}
+                      value={this.state.player.contactPhone}
+                      onChange={this.handleChangeContact.bind(this)}
                     />
                     <AtInput
                       className='input1'
-                      name='contestArea1'
+                      name='contestArea'
                       title='大区'
                       type='text'
                       placeholder='大区'
-                      value={this.state.player1.contestArea1}
-                      onChange={this.handleChangeArea1.bind(this)}
+                      value={this.state.player.contestArea}
+                      onChange={this.handleChangeArea.bind(this)}
                     />
                     <AtInput
                       className='input1'
-                      name='playerId1'
+                      name='playerId'
                       title='游戏ID'
                       type='text'
                       placeholder='游戏ID'
-                      value={this.state.player1.playerId1}
-                      onChange={this.handleChangePlayerId1.bind(this)}
+                      value={this.state.player.playerId}
+                      onChange={this.handleChangePlayerId.bind(this)}
                     />
                     <AtInput
                       className='input1'
-                      name='playerLevel1'
+                      name='playerLevel'
                       title='段位'
                       type='text'
                       placeholder='段位'
-                      value={this.state.player1.playerLevel1}
-                      onChange={this.handleChangeLevel1.bind(this)}
+                      value={this.state.player.playerLevel}
+                      onChange={this.handleChangeLevel.bind(this)}
                     />
                     <AtInput
                       className='input1'
-                      name='otherInfo1'
+                      name='otherInfo'
                       title='其他信息'
                       type='text'
                       placeholder='其他信息'
-                      value={this.state.player1.otherInfo1}
-                      onChange={this.handleChangeOther1.bind(this)}
+                      value={this.state.player.otherInfo}
+                      onChange={this.handleChangeOther.bind(this)}
                     />
                   </AtForm>
                 </AtCard>

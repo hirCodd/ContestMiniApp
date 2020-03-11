@@ -3,6 +3,7 @@ import { View } from '@tarojs/components'
 import './index.scss'
 import UserInfoBar from "../../component/UserInfoBar";
 import { AtList, AtListItem } from "taro-ui"
+import {BASE_URL} from "../../services/config";
 
 export default class Mine extends Component {
 
@@ -28,7 +29,21 @@ export default class Mine extends Component {
 
   componentWillMount () { }
 
-  componentDidMount () { }
+  componentDidMount () {
+    let that = this;
+    Taro.checkSession({
+      success: function () {
+        // session未过期则继续维持登录状态
+        that.setState({
+          isLogin: true
+        });
+        that.setState({
+          userInfos: Taro.getStorageSync("userInfo")
+        });
+      },
+      fail: function () {}
+    })
+  }
 
   componentWillUnmount () { }
 
@@ -36,9 +51,9 @@ export default class Mine extends Component {
 
   componentDidHide () { }
 
-  onClickBrowsePage () {
+  onClickMyApplyPage () {
     Taro.navigateTo({
-      url: '/pages/ChildPages/BrowsePage/index' + '?TitleText=浏览记录' + '&userId=' + '1'
+      url: '/pages/ChildPages/MyApply/index' + '?TitleText=我的报名' + '&userId=' + '1'
     });
   }
   onClickFavoritePage () {
@@ -67,15 +82,119 @@ export default class Mine extends Component {
     });
   }
 
+  async onClickLogin (e) {
+    const that = this;
+    await this.setState({
+      userInfos: JSON.parse(e.detail.rawData)
+    });
+    return Taro.checkSession({
+      success: function () {
+        // session未过期则继续维持登录状态
+        that.setState({
+          isLogin: true
+        });
+        that.setState({
+          userInfos: Taro.getStorageSync("userInfo")
+        });
+        return that.bindGetUserInfo(e);
+      },
+      fail: function () {
+        // 失败则重新登录
+        Taro.removeStorageSync('logininfo');
+        Taro.removeStorageSync("userInfo");
+        return that.bindGetUserInfo(e);
+      }
+    })
+  }
+
+  bindGetUserInfo (e) {
+    //清除缓存
+    Taro.clearStorageSync();
+    Taro.setStorageSync('userInfo', JSON.parse(e.detail.rawData));
+    let userInfo = JSON.parse(e.detail.rawData);
+    return Taro.login({
+      success: response => {
+        if (response.code)  {
+          Taro.request({
+            url: BASE_URL + '/user/onLogin?' + 'code=' + response.code,
+            success: res => {
+              let userOpenInfo = JSON.parse(res.data.data);
+              if (userOpenInfo) {
+                Taro.setStorageSync('logininfo', userOpenInfo);
+                // 核验用户是否存在
+                Taro.request({
+                  method: 'POST',
+                  url: BASE_URL + '/user/verify',
+                  data: {
+                    openId: userOpenInfo.openid
+                  },
+                  dataType: 'json',
+                  header: {
+                    'content-type': 'application/json'
+                  },
+                  success: verifyResponse => {
+                    if (verifyResponse.statusCode === 200 && verifyResponse.data.data == null) {
+                      //如果用户不存在则注册用户
+                      Taro.request({
+                        method: 'POST',
+                        url: BASE_URL + '/user/register',
+                        data: {
+                          openId: userOpenInfo.openid,
+                          nickname: userInfo.nickName,
+                          userThumb: userInfo.avatarUrl,
+                          gender: userInfo.gender,
+                          country: userInfo.country,
+                          province: userInfo.province,
+                          city: userInfo.city
+                        },
+                        dataType: 'json',
+                        header: {
+                          'content-type': 'application/json'
+                        },
+                        success: registerRes => {
+                          this.setState({
+                            userInfos: userInfo
+                          });
+                          this.setState({
+                            isLogin: true
+                          });
+                        }
+                      })
+                    } else if (verifyResponse.statusCode === 200 && verifyResponse.data.data != null) {
+                      this.setState({
+                        userInfos: userInfo
+                      });
+                      this.setState({
+                        isLogin: true
+                      });
+                      // 数据已存在则直接更新组件
+                    } else {
+                      console.log("验证用户返回数据错误！");
+                    }
+                  },
+                  fail: verifyResponse => {
+                    console.log(verifyResponse)
+                  }
+                });
+              }
+            }
+          })
+        }
+      }
+    })
+  }
+
 
   render () {
     return (
       <View className='mine-index'>
         <UserInfoBar isLogin={this.state.isLogin}
+                     onClick={this.onClickLogin.bind(this)}
+                     userInfo={this.state.userInfos}
         ></UserInfoBar>
         <View className='about-reader'>
           <AtList>
-            <AtListItem onClick={this.onClickBrowsePage} title='我的报名' arrow='right' iconInfo={{ size: 24, color: '#F5C534', value: 'clock' }} />
+            <AtListItem onClick={this.onClickMyApplyPage} title='我的报名' arrow='right' iconInfo={{ size: 24, color: '#F5C534', value: 'clock' }} />
             {/*<AtListItem onClick={this.onClickFavoritePage} title='我的收藏' arrow='right' iconInfo={{ size: 24, color: '#74CAFF', value: 'star' }} />*/}
             {/*<AtListItem onClick={this.onClickMyLikePage} title='点赞好文' arrow='right' iconInfo={{ size: 25, color: '#FF4959', value: 'heart-2' }} />*/}
             {/*<AtListItem title='我的xx' arrow='right' extraText='详细信息' iconInfo={{ size: 25, color: '#FF4949', value: 'bookmark' }} />*/}

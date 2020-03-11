@@ -6,7 +6,11 @@ export default {
     contests: [],
     content: {},
     articleTotal: 0,
-    nextPage: 0
+    nextPage: 0,
+    applyResult: '',
+    teamId: '',
+    teamInfo: '',
+    allTeamName: []
   },
   reducers: {
     save (state, { payload }) {
@@ -50,12 +54,42 @@ export default {
         }
       });
     },
-    *addContestMember({ payload }, { call, put }) {
-      const { data } = yield call(ApiService.insertContestMember, payload.contestMember)
+    *queryApplyResult({ payload }, { call, put }) {
+      const { data } = yield call(ApiService.queryApplyResult, payload.contestId, payload.openId);
+      yield put({
+        type: 'save',
+        payload: {
+          applyResult: data.data
+        }
+      })
     },
-
-
-
+    *queryTeamInfoResult({ payload }, { call, put }) {
+      const { data } = yield call(ApiService.queryTeamInfo, payload.contestId, payload.openId);
+      yield put({
+        type: 'save',
+        payload: {
+          teamInfo: data.data
+        }
+      })
+    },
+    *insertTeamInfo({ payload }, { call, put }) {
+      const { data } = yield call(ApiService.insertTeamInfo, payload.teamInfo);
+      yield put({
+        type: 'save',
+        payload: {
+          teamId: data.data
+        }
+      })
+    },
+    *queryTeamNames({ payload }, { call, put }) {
+      const { data } = yield call(ApiService.queryTeamNames, payload.contestId);
+      yield put({
+        type: 'save',
+        payload: {
+          allTeamName: data.data
+        }
+      })
+    },
     *searchArticle({ payload }, { call, put }) {
       const { data } = yield call(ApiService.searchArticlesByKeyword, payload.keyword);
       yield put({

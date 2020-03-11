@@ -1,12 +1,43 @@
 import Taro, {Component} from '@tarojs/taro'
 import {View, Image, Text} from '@tarojs/components'
-import { AtDivider } from 'taro-ui'
+import { AtDivider, AtTag } from 'taro-ui'
 import './index.scss'
 
 export default class Contest extends Component {
   static options = {
     addGlobalClass: true
   };
+  constructor (props) {
+    super(props);
+    this.state = {
+      contestState: {
+        noStartApply: '未开始报名',
+        canApply: '正在报名',
+        completeApply: '报名结束',
+        contesting: '正在比赛',
+        endContest: '报名结束'
+      }
+    }
+  }
+
+  handleState(applyTime, applyEndTime, startContestTime, endContestTime) {
+    let now = new Date();
+    applyTime = new Date(applyTime);
+    applyEndTime = new Date(applyEndTime);
+    startContestTime = new Date(startContestTime);
+    endContestTime = new Date(endContestTime);
+    if (now < applyTime) {
+      return this.state.contestState.noStartApply;
+    } else if (applyTime < now && now < applyEndTime) {
+      return this.state.contestState.canApply;
+    } else if (applyEndTime < now && now < startContestTime) {
+      return this.state.contestState.completeApply;
+    } else if (startContestTime < now && now < endContestTime) {
+      return this.state.contestState.contesting;
+    } else if (endContestTime < now) {
+      return this.state.contestState.endContest;
+    }
+  }
 
   render () {
     return (
@@ -23,7 +54,14 @@ export default class Contest extends Component {
           </View>
           <View className='article-content'>
             {/*标题*/}
-            <View className='at-col article-title'>{this.props.contestName}</View>
+            <View className='topbar'>
+              <View className='at-col article-title'>{this.props.contestName}</View>
+              <View className='tag'>
+                <AtTag type='primary' circle>{this.handleState(this.props.contestApplyTime, this.props.contestApplyEndTime,
+                  this.props.contestStartTime, this.props.contestEndTime)}</AtTag>
+              </View>
+            </View>
+
             {/*<View className='at-col article-title'>{this.state.title}</View>*/}
             {/*标签*/}
             <View className='article-tag'>

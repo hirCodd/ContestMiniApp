@@ -29,6 +29,22 @@ export default class Index extends Component {
       isSearch: false
     }
   }
+  componentWillMount () {
+    try {
+      Taro.checkSession({
+        success: function () {
+          console.log("session未失效");
+        },
+        fail: function () {
+          Taro.removeStorageSync("logininfo");
+          console.log("session已失效");
+        }
+      });
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   async componentDidMount() {
     await this.getArticles(this.state.defaultPageNum);
   }
@@ -38,13 +54,46 @@ export default class Index extends Component {
       value: value
     });
   }
-  onClear () {
-
+  async onClear () {
+    await this.setState({
+      isSearch: false
+    });
+    await this.setState({
+      searchArticles: []
+    });
   }
-  onBlur () {
-
+  async onBlur () {
+    await this.setState({
+      isSearch: false
+    });
+    await this.setState({
+      searchArticles: []
+    });
   }
-  onActionClick () {
+  async onActionClick () {
+    await this.setState({
+      isSearch: true
+    });
+    await this.props.dispatch({
+      type: 'home/searchArticle',
+      payload: {
+        keyword: this.state.value
+      }
+    });
+    //判断是否有重复文章
+    await this.props.home.articles.map((article) => {
+      if(JSON.stringify(this.state.searchArticles).indexOf(JSON.stringify(article)) === -1){
+        this.state.searchArticles.push(article);
+      } else {
+
+      }
+    });
+    await this.props.dispatch({
+      type: 'home/clean',
+      payload: {
+        articles: []
+      }
+    });
   }
   async getArticles (pageNumber) {
     await this.props.dispatch({
@@ -63,6 +112,27 @@ export default class Index extends Component {
         contests: []
       }
     });
+  }
+  async handleClick () {
+    const that = this;
+    if (this.props.home.nextPage != 0) {
+      // 开始加载
+      this.getArticles(this.props.home.nextPage).then(function () {
+        if (that.props.home.nextPage == 0) {
+          that.setState({
+            status: 'noMore'
+          })
+        } else {
+          that.setState({
+            status: 'more'
+          });
+        }
+      })
+    } else {
+      this.setState({
+        status: 'noMore'
+      });
+    }
   }
   onClickContest (contestId, contestName) {
     console.log(contestId)
@@ -85,31 +155,64 @@ export default class Index extends Component {
           onActionClick={this.onActionClick.bind(this)
           }
         />
-        <View>
-          {this.state.contests.map((contest) =>
-            <Contest onClick={this.onClickContest.bind(this, contest.contestId, contest.contestName)}
-                     key={contest.contestId}
-                     author={contest.author}
-                     contestName={contest.contestName}
-                     contestApplyTime={contest.contestApplyTime}
-                     contestApplyEndTime={contest.contestApplyEndTime}
-                     contestAddress={contest.contestAddress}
-                     contactUser={contest.contactUser}
-                     contactPhone={contest.contactPhone}
-                     contestStartTime={contest.contestStartTime}
-                     contestEndTime={contest.contestEndTime}
-                     contestCooperation={contest.contestCooperation}
-                     contestIntroduce={contest.contestIntroduce}
-                     contestReward={contest.contestReward}
-                     contestApplyRule={contest.contestApplyRule}
-                     contestProcess={contest.contestProcess}
-                     contestInfo={contest.contestInfo}
-                     contestThumb={contest.contestThumb}
-                     contestPublishTime={contest.publishTime}
-            ></Contest>
-          )}
+        {
+          this.state.isSearch ?
+            <View>
+              {this.state.searchContests.map((contest) =>
+                <Contest onClick={this.onClickContest.bind(this, contest.contestId, contest.contestName)}
+                         key={contest.contestId}
+                         author={contest.author}
+                         contestName={contest.contestName}
+                         contestApplyTime={contest.contestApplyTime}
+                         contestApplyEndTime={contest.contestApplyEndTime}
+                         contestAddress={contest.contestAddress}
+                         contactUser={contest.contactUser}
+                         contactPhone={contest.contactPhone}
+                         contestStartTime={contest.contestStartTime}
+                         contestEndTime={contest.contestEndTime}
+                         contestCooperation={contest.contestCooperation}
+                         contestIntroduce={contest.contestIntroduce}
+                         contestReward={contest.contestReward}
+                         contestApplyRule={contest.contestApplyRule}
+                         contestProcess={contest.contestProcess}
+                         contestInfo={contest.contestInfo}
+                         contestThumb={contest.contestThumb}
+                         contestPublishTime={contest.publishTime}
+                ></Contest>
+              )}
+            </View> : <View>
+                {this.state.contests.map((contest) =>
+                  <Contest onClick={this.onClickContest.bind(this, contest.contestId, contest.contestName)}
+                           key={contest.contestId}
+                           author={contest.author}
+                           contestName={contest.contestName}
+                           contestApplyTime={contest.contestApplyTime}
+                           contestApplyEndTime={contest.contestApplyEndTime}
+                           contestAddress={contest.contestAddress}
+                           contactUser={contest.contactUser}
+                           contactPhone={contest.contactPhone}
+                           contestStartTime={contest.contestStartTime}
+                           contestEndTime={contest.contestEndTime}
+                           contestCooperation={contest.contestCooperation}
+                           contestIntroduce={contest.contestIntroduce}
+                           contestReward={contest.contestReward}
+                           contestApplyRule={contest.contestApplyRule}
+                           contestProcess={contest.contestProcess}
+                           contestInfo={contest.contestInfo}
+                           contestThumb={contest.contestThumb}
+                           contestPublishTime={contest.publishTime}
+                  ></Contest>
+                )}
+            </View>
+        }
+        <View >
+          <AtLoadMore
+            className='load-more'
+            onClick={this.handleClick.bind(this)}
+            status={this.state.status}
+            noMoreText={"真的一篇都没有了..."}
+          />
         </View>
-
       </View>
     )
   }

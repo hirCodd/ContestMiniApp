@@ -22,9 +22,6 @@ export default class Index extends Component {
       title: this.$router.params.contestName
     });
   }
-  handleChange () {
-
-  }
   async componentDidMount () {
     await this.getContent();
   }
@@ -40,22 +37,49 @@ export default class Index extends Component {
       content: this.props.home.content
     })
   }
-
-  onClickApplyContest () {
-    let isSubmit = Taro.getStorageSync("isSubmit");
-    if (!isSubmit) {
-      Taro.navigateTo({
-        url: '/pages/ChildPages/ApplyContest/index?' + "contestId=" + this.$router.params.contestId
-      });
-    } else {
-      Taro.showToast({
-        title: "您已经提交比赛"
-      })
-    }
+  async checkApplyResult (contestId, openId) {
+    await this.props.dispatch({
+      type: 'home/queryApplyResult',
+      payload: {
+        contestId: contestId,
+        openId: openId
+      }
+    });
   }
 
+  async onClickApplyContest () {
+    let that = this;
+    let userInfo = Taro.getStorageSync("logininfo");
+    await this.checkApplyResult(this.$router.params.contestId, userInfo.openid);
+    await Taro.checkSession({
+      success: function () {
+        if (that.props.home.applyResult == null || !that.props.home.applyResult) {
+          if (userInfo) {
+            Taro.navigateTo({
+              url: '/pages/ChildPages/ApplyContest/index?' + "contestId=" + that.$router.params.contestId
+            });
+          } else {
+            Taro.showToast({
+              title: "请您先登录！"
+            })
+          }
+        } else {
+          Taro.showToast({
+            title: "您已报名！"
+          })
+        }
+      },
+      fail: function () {
+        Taro.removeStorageSync('logininfo');
+        Taro.showToast({
+          title: "请您先登录！"
+        })
+      }
+    });
+  }
+
+
   render () {
-    console.log(this.state.content.contestThumb)
     return (
       <View className='at-article index'>
         {/*比赛图片*/}
@@ -83,27 +107,11 @@ export default class Index extends Component {
             <AtDivider height='16Px' lineColor='#ccc' />
           </View>
           <View className='contest-contain'>
-            <View className='at-row'>
-              <View className='at-col at-col-2'>报名时间</View>
-              <View className='at-col at-col-10'>{this.state.content.contestApplyTime}~
-                {this.state.content.contestApplyEndTime}</View>
-            </View>
-            <View className='at-row'>
-              <View className='at-col at-col-2'>比赛时间</View>
-              <View className='at-col at-col-10'>{this.state.content.contestStartTime} ~ {this.state.content.contestEndTime}</View>
-            </View>
-            <View className='at-row'>
-              <View className='at-col at-col-2'>地址</View>
-              <View className='at-col at-col-10'>{this.state.content.contestAddress}</View>
-            </View>
-            <View className='at-row'>
-              <View className='at-col at-col-2'>联系人</View>
-              <View className='at-col at-col-10'>{this.state.content.contactUser + " " + this.state.content.contactPhone}</View>
-            </View>
-            <View className='at-row'>
-              <View className='at-col at-col-2'>合作方</View>
-              <View className='at-col at-col-10'>{this.state.content.contestCooperation}</View>
-            </View>
+            <View>报名时间: {this.state.content.contestApplyTime} ~ {this.state.content.contestApplyEndTime}</View>
+            <View>比赛时间: {this.state.content.contestStartTime} ~ {this.state.content.contestEndTime}</View>
+            <View>地址: {this.state.content.contestAddress}</View>
+            <View>联系人： {this.state.content.contactUser + " " + this.state.content.contactPhone}</View>
+            <View>合作方: {this.state.content.contestCooperation}</View>
             {/*比赛奖励*/}
             <View className='content-header'>
               <Text className='at-article__h2'>赛事奖励</Text>

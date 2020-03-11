@@ -33,7 +33,10 @@ class App extends Component {
       'pages/index/index',
       'pages/mine/index',
       'pages/ChildPages/ContestDetail/index',
-      'pages/ChildPages/ApplyContest/index'
+      'pages/ChildPages/ApplyContest/index',
+      'pages/ChildPages/MyApply/index',
+      'pages/ChildPages/AboutPage/index',
+      'pages/ChildPages/CopyrightPage/index',
     ],
     tabBar: {
       backgroundColor: "#fff",
