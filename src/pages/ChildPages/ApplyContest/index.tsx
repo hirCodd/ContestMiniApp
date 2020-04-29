@@ -436,7 +436,7 @@ export default class Index extends Component {
       this.state.player.memberPhone = this.state.contactPhone;
       this.state.player.contestArea= this.state.contestArea;
       this.state.player.memberPlayerId = this.state.playerId;
-      this.state.player.memberPlayLevel = this.state.playerLevel;
+      this.state.player.memberPlayerLevel = this.state.playerLevel;
       this.state.player.contestOtherInfo = this.state.otherInfo;
       this.state.player.isTeam = false;
       this.state.player.applyResult = true;
@@ -481,7 +481,7 @@ export default class Index extends Component {
       this.state.player1.memberPhone = this.state.contactPhone1;
       this.state.player1.contestArea= this.state.contestArea1;
       this.state.player1.memberPlayerId = this.state.playerId1;
-      this.state.player1.memberPlayLevel = this.state.playerLevel1;
+      this.state.player1.memberPlayerLevel = this.state.playerLevel1;
       this.state.player1.contestOtherInfo = this.state.otherInfo1;
       this.state.player1.isTeam = true;
       this.state.player1.applyResult = true;
@@ -493,7 +493,7 @@ export default class Index extends Component {
       this.state.player2.memberPhone = this.state.contactPhone2;
       this.state.player2.contestArea= this.state.contestArea2;
       this.state.player2.memberPlayerId = this.state.playerId2;
-      this.state.player2.memberPlayLevel = this.state.playerLevel2;
+      this.state.player2.memberPlayerLevel = this.state.playerLevel2;
       this.state.player2.contestOtherInfo = this.state.otherInfo2;
       this.state.player2.isTeam = true;
       this.state.player2.applyResult = true;
@@ -505,7 +505,7 @@ export default class Index extends Component {
       this.state.player3.memberPhone = this.state.contactPhone3;
       this.state.player3.contestArea= this.state.contestArea3;
       this.state.player3.memberPlayerId = this.state.playerId3;
-      this.state.player3.memberPlayLevel = this.state.playerLevel3;
+      this.state.player3.memberPlayerLevel = this.state.playerLevel3;
       this.state.player3.contestOtherInfo = this.state.otherInfo3;
       this.state.player3.isTeam = true;
       this.state.player3.applyResult = true;
@@ -517,7 +517,7 @@ export default class Index extends Component {
       this.state.player4.memberPhone = this.state.contactPhone4;
       this.state.player4.contestArea= this.state.contestArea4;
       this.state.player4.memberPlayerId = this.state.playerId4;
-      this.state.player4.memberPlayLevel = this.state.playerLevel4;
+      this.state.player4.memberPlayerLevel = this.state.playerLevel4;
       this.state.player4.contestOtherInfo = this.state.otherInfo4;
       this.state.player4.isTeam = true;
       this.state.player4.applyResult = true;
@@ -529,7 +529,7 @@ export default class Index extends Component {
       this.state.player5.memberPhone = this.state.contactPhone5;
       this.state.player5.contestArea= this.state.contestArea5;
       this.state.player5.memberPlayerId = this.state.playerId5;
-      this.state.player5.memberPlayLevel = this.state.playerLevel5;
+      this.state.player5.memberPlayerLevel = this.state.playerLevel5;
       this.state.player5.contestOtherInfo = this.state.otherInfo5;
       this.state.player5.isTeam = true;
       this.state.player5.applyResult = true;
